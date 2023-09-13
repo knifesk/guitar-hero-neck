@@ -84,8 +84,11 @@ void initNeck() {
   Wire.write(0x01); // Just complete the last byte
   byte err = Wire.endTransmission();
 
-  delay(10); // Wait 50µs to read.
-
+  if (SERIAL_EN && VERBOSE) {
+    delay(50);
+  } else {
+    delay(10); // Manual says Wait 50µs to read. But original board uses 10ms only
+  }
   //setup the vars
   uint expectedByteCount = 4;
   uint8_t values[expectedByteCount];
@@ -98,7 +101,7 @@ void initNeck() {
 
   for (size_t i = 0; i < expectedByteCount; i++) {
     if (values[i] != packetHello[i]) {
-      if (SERIAL_EN) { 
+      if (SERIAL_EN && VERBOSE) { 
         Serial.println("Invalid response"); 
         printByteArray(values, readCount);
       }
@@ -122,7 +125,11 @@ void requestDataFromNeck() {
   Wire.write(0x01); // Just complete the last byte
   Wire.endTransmission();
 
-  delay(10); // Wait 50µs to read.
+  if (SERIAL_EN && VERBOSE) {
+    delay(50);
+  } else {
+    delay(10); // Manual says Wait 50µs to read. But original board uses 10ms only
+  }
 
   unsigned int expectedByteCount = 4; 
   uint8_t values[expectedByteCount];
@@ -134,10 +141,19 @@ void requestDataFromNeck() {
     }
     return;
   }
+
+  // If response it's not packet #2, ignore it
+  if (values[0] != 0x52) {
+    return;
+  }
 }
 
 void loop() {
-  delay(10);
+  if (SERIAL_EN && VERBOSE) {
+    delay(500);
+  } else {
+    delay(10); // Original board waits 10ms only
+  }
   
   if (!isInitialized) {
     initNeck();
