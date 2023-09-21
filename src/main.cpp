@@ -6,6 +6,7 @@
 #define VERBOSE false  // Verbose serial output
 
 #define I2C_ADDRESS 0x10
+#define DELAY 2
 
 #define BTN_GREEN  arr[2] & 0x40
 #define BTN_RED    arr[2] & 0x01
@@ -150,7 +151,7 @@ unsigned int readFromSerial(uint8_t* arr, unsigned int expectedByteCount) {
 
 bool isInitialized = false;
 void initNeck() {
-  uint8_t packetHello[4] = {0x55, 0x55, 0x55, 0x55};
+  // uint8_t packetHello[4] = {0x55, 0x55, 0x55, 0x55};
 
   Wire.beginTransmission(I2C_ADDRESS);
   Wire.write(0x53); // Write Send a Write + Packet #3
@@ -166,11 +167,11 @@ void initNeck() {
   if (SERIAL_EN && VERBOSE) {
     delay(50);
   } else {
-    delay(10); // Manual says Wait 50µs to read. But original board uses 10ms only
+    delay(DELAY); // Manual says Wait 50µs to read. But original board uses 10ms only
   }
 
   //setup the vars
-  uint expectedByteCount = 4;
+  uint8_t expectedByteCount = 4;
   uint8_t values[expectedByteCount];
   unsigned int readCount = readFromSerial(values, expectedByteCount);
   if (SERIAL_EN && VERBOSE) { printByteArray(values, readCount); }
@@ -210,7 +211,7 @@ void requestDataFromNeck() {
   if (SERIAL_EN && VERBOSE) {
     delay(50);
   } else {
-    delay(10); // Manual says Wait 50µs to read. But original board uses 10ms only
+    delay(DELAY); // Manual says Wait 50µs to read. But original board uses 10ms only
   }
 
   unsigned int expectedByteCount = 4; 
@@ -248,7 +249,7 @@ void loop() {
   if (SERIAL_EN && VERBOSE) {
     delay(500);
   } else {
-    delay(10); // Original board waits 10ms only
+    delay(DELAY); // Original board waits 10ms only
   }
   
   if (!isInitialized) {
