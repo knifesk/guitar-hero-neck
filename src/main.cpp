@@ -6,7 +6,7 @@
 #define VERBOSE false  // Verbose serial output
 
 #define I2C_ADDRESS 0x10
-#define DELAY 2
+#define DELAY 3 // this is the lowest we can go!
 
 #define BTN_GREEN  arr[2] & 0x40
 #define BTN_RED    arr[2] & 0x01
